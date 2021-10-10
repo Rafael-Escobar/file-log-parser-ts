@@ -1,4 +1,4 @@
-interface LogWriter {
+export interface LogWriter {
     writeLogFile(filePath: string, data: object):boolean;
 }
 

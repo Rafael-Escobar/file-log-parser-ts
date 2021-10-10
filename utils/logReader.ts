@@ -1,4 +1,4 @@
-interface LogReader {
+export interface LogReader {
     readLogFile(filePath: string): string;
 }
 var fs = require('fs');

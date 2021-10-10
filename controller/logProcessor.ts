@@ -1,6 +1,6 @@
-import { AppLogReader } from "../utils/logReader";
-import { AppLogWriter } from "../utils/logWriter";
-import { ParserLogApp, RegexCheck } from "../utils/logParser";
+import { LogReader } from "../utils/logReader";
+import { LogWriter } from "../utils/logWriter";
+import { LogParser } from "../utils/logParser";
 
 interface LogExtractor {
     extractLog(filePathInput: string): Array<string>;
@@ -16,26 +16,28 @@ interface LogProcessor {
 
 export class AppLogProcessor implements LogExtractor, LogExport, LogProcessor {
     
-    private regexFilter: object
+    private logReader: any
+    private logWriter: any
+    private logParser: any
     
-    constructor(regexFilter: object) {
-        this.regexFilter = regexFilter
+    constructor(regexFilter: object, logReader: LogReader, logWriter: LogWriter, logParser: LogParser) {
+        this.logReader = logReader
+        this.logWriter = logWriter
+        this.logParser = logParser
+        this.logParser.setRegexFilter(regexFilter)
     }
     
     extractLog(filePathInput: string): Array<string>{
-        let reader = new AppLogReader()
-        return reader.readLogFile(filePathInput).split("\n")
+        return this.logReader.readLogFile(filePathInput).split("\n")
     }
     
     exportLog(filePathOutput: string,data:object): boolean{
-        let writer = new AppLogWriter()
-        return writer.writeLogFile(filePathOutput,data)
+        return this.logWriter.writeLogFile(filePathOutput,data)
     }
     
     processLog(filePathInput: string, filePathOutput:string): boolean{
         let linesOfLog = this.extractLog(filePathInput)
-        let parser = new ParserLogApp(this.regexFilter)
-        let objectList = parser.filterAndParser(linesOfLog)
+        let objectList = this.logParser.filterAndParser(linesOfLog)
         console.log(objectList)
         return this.exportLog(filePathOutput, objectList)
     }

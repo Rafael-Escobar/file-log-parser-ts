@@ -2,8 +2,9 @@ interface RegexParser {
     validateWithRegex(content: string, rule: RegExp):boolean;
 }
 
-interface ParserLog{
+export interface LogParser{
     extractTimeStamp(log: string): string;
+    setRegexFilter(regexFilter: object): void;
     extractTypeLog(log: string): string;
     extractDataObject(log: string): string;
     filterAndParser(linesOfLog: Array<string>): Array<object>;
@@ -16,9 +17,14 @@ export class RegexCheck implements RegexParser {
     }
 }
 
-export class ParserLogApp implements ParserLog {
+export class AppParserLog implements LogParser {
     public regexFilter:object
-    constructor(regexFilter: object) {
+
+    constructor() {
+        this.regexFilter ={}
+    }
+
+    public setRegexFilter(regexFilter: object) {
         this.regexFilter = regexFilter
     }
     
