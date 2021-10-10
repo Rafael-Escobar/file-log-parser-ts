@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ParserLogApp = exports.RegexCheck = void 0;
+exports.AppParserLog = exports.RegexCheck = void 0;
 var RegexCheck = /** @class */ (function () {
     function RegexCheck() {
     }
@@ -10,27 +10,30 @@ var RegexCheck = /** @class */ (function () {
     return RegexCheck;
 }());
 exports.RegexCheck = RegexCheck;
-var ParserLogApp = /** @class */ (function () {
-    function ParserLogApp(regexFilter) {
-        this.regexFilter = regexFilter;
+var AppParserLog = /** @class */ (function () {
+    function AppParserLog() {
+        this.regexFilter = {};
     }
-    ParserLogApp.prototype.extractTimeStamp = function (log) {
+    AppParserLog.prototype.setRegexFilter = function (regexFilter) {
+        this.regexFilter = regexFilter;
+    };
+    AppParserLog.prototype.extractTimeStamp = function (log) {
         return this.regexFilter["regexTimeStamp"].exec(log)[0];
     };
-    ParserLogApp.prototype.extractTypeLog = function (log) {
+    AppParserLog.prototype.extractTypeLog = function (log) {
         return this.regexFilter["regexType"].exec(log)[0].replace(" -", "").replace("- ", "");
     };
-    ParserLogApp.prototype.extractDataObject = function (log) {
+    AppParserLog.prototype.extractDataObject = function (log) {
         return this.regexFilter["regexJsonObject"].exec(log)[0];
     };
-    ParserLogApp.prototype.filterLineOfLog = function (validLine, filerLine) {
+    AppParserLog.prototype.filterLineOfLog = function (validLine, filerLine) {
         return function (element) {
             var checkRegex = new RegexCheck();
             return (checkRegex.validateWithRegex(element.trim(), validLine) &&
                 checkRegex.validateWithRegex(element.trim(), filerLine));
         };
     };
-    ParserLogApp.prototype.parserToObject = function (log) {
+    AppParserLog.prototype.parserToObject = function (log) {
         var timeStampString = this.extractTimeStamp(log);
         var type = this.extractTypeLog(log);
         var dataObject = JSON.parse(this.extractDataObject(log));
@@ -42,7 +45,7 @@ var ParserLogApp = /** @class */ (function () {
             "err": dataObject.details || ""
         };
     };
-    ParserLogApp.prototype.filterAndParser = function (linesOfLog) {
+    AppParserLog.prototype.filterAndParser = function (linesOfLog) {
         var _this = this;
         var filteredLinesOfLog = linesOfLog.filter(this.filterLineOfLog(this.regexFilter["regexValidLineOfLog"], this.regexFilter["regexFilterLine"]));
         var listOfObjects = filteredLinesOfLog.map(function (lineOfLog) {
@@ -50,6 +53,6 @@ var ParserLogApp = /** @class */ (function () {
         });
         return listOfObjects;
     };
-    return ParserLogApp;
+    return AppParserLog;
 }());
-exports.ParserLogApp = ParserLogApp;
+exports.AppParserLog = AppParserLog;
